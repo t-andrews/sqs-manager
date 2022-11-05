@@ -4,10 +4,9 @@
     import IconButton, { Icon } from '@smui/icon-button';
     import { isDark } from '../lib/shared/stores/Theme';
     import { accountInfo } from '../lib/shared/stores/AccountInfo';
-    import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar';
+    import TopAppBar, { Row, Section, AutoAdjust } from '@smui/top-app-bar';
     import { mdiLightbulbOff, mdiLightbulbOn } from '@mdi/js'
     import { Svg } from '@smui/common';
-    import { SqsService } from '../lib/shared/infrastructure/SqsService';
 
     let topAppBar;
 
@@ -16,7 +15,8 @@
         if (!isAccountInfoPresent) {
             await goto('/connect', { replaceState: true });
         } else {
-            await SqsService.connect(...$accountInfo);
+            await fetch('/api/connect', { method: 'POST', body: JSON.stringify($accountInfo) })
+            await goto('/queues', { replaceState: true });
         }
     }
 
