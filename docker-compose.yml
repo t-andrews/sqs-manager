@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    hostname: localstack
+    user: root
+    ports:
+      - "4563-4584:4563-4584"
+    environment:
+      - SERVICES=s3,iam,sts,events,sqs
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test123
+      - AWS_SECRET_ACCESS_KEY=test123
+      - DISABLE_CORS_CHECKS=1
