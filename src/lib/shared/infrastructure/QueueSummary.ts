@@ -1,7 +1,8 @@
-import type { SQS } from 'aws-sdk';
-
 export interface QueueAttributes {
-    CreatedTimestamp: string;
+    ApproximateNumberOfMessages: number;
+    ApproximateNumberOfMessagesDelayed: number;
+    ApproximateNumberOfMessagesNotVisible: number;
+    CreatedTimestamp: number;
     DelaySeconds: number;
     LastModifiedTimestamp: number;
     MaximumMessageSize: number;
@@ -12,13 +13,13 @@ export interface QueueAttributes {
     VisibilityTimeout: number;
 }
 
-export class Queue {
+export class QueueSummary {
     private constructor(
         public readonly queueUrl: string,
         public readonly attributes: QueueAttributes
     ) {}
 
     public static create(queueUrl: string, attributes: QueueAttributes) {
-        return new Queue(queueUrl, attributes);
+        return new QueueSummary(queueUrl, attributes);
     }
 }

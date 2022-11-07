@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-interface AccountInfo {
+export interface AccountInfo {
     endpoint: string|null;
     accessKeyId: string|null;
     secretAccessKey: string|null;

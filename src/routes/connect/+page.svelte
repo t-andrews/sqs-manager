@@ -1,12 +1,13 @@
 <script lang="ts">
     import Card from '@smui/card';
-    import Textfield from '@smui/textfield';
     import Button from '@smui/button';
-    import { SqsService } from '../../lib/shared/infrastructure/SqsService';
-    import { SyncLoader } from 'svelte-loading-spinners';
+    import Keydown from 'svelte-keydown';
     import { goto } from '$app/navigation';
+    import Textfield from '@smui/textfield';
     import Paper, { Title, Content } from '@smui/paper';
+    import { SyncLoader } from 'svelte-loading-spinners';
     import { accountInfo } from '../../lib/shared/stores/AccountInfo';
+    import { clientFetch } from '../../lib/shared/client/clientFetch';
 
     let endpoint = '';
     let accessKeyId = '';
@@ -16,16 +17,17 @@
 
     async function connectSqs() {
         connecting = true;
-        await fetch('/api/connect', { method: 'POST', body: JSON.stringify({ endpoint, accessKeyId, secretAccessKey }) })
+        accountInfo.update(a => a = { endpoint, accessKeyId, secretAccessKey });
+        await clientFetch('/api/connect', $accountInfo, { method: 'POST', body: JSON.stringify({ endpoint, accessKeyId, secretAccessKey }) })
         await goto('/queues', { replaceState: true });
     }
 </script>
 
 <style>
     .connect-card {
-        width: 30%;
+        width: 50%;
         margin-top: 3%;
-        margin-left: 35%;
+        margin-left: 25%;
     }
     .connect-btn {
         margin-top: 5%;
@@ -35,6 +37,16 @@
         align-items: center;
     }
 </style>
+
+<Keydown on:Enter={
+        async () => {
+            if (!endpoint || !accessKeyId || !secretAccessKey) {
+                return;
+            }
+            await connectSqs();
+        }
+    }
+/>
 
 <div class="card-container connect-card">
     <Card padded variant="outlined" class="paper-container">

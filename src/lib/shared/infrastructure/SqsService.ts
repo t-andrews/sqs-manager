@@ -1,15 +1,5 @@
 import AWS from 'aws-sdk';
-import { Queue, type QueueAttributes } from './Queue';
-import { accountInfo } from '../stores/AccountInfo';
-import { get } from 'svelte/store';
-
-export interface Page {
-    queues: Queue[]
-}
-
-export interface Pages {
-    pages: Page[];
-}
+import { QueueSummary, type QueueAttributes } from './QueueSummary';
 
 export class SqsService {
     private readonly client: AWS.SQS;
@@ -24,11 +14,6 @@ export class SqsService {
     }
 
     public static async connect(endpoint: string, accessKeyId: string, secretAccessKey: string): Promise<SqsService> {
-        accountInfo.set({
-            endpoint,
-            accessKeyId,
-            secretAccessKey
-        });
         AWS.config.update({
             region: 'us-east-1',
             accessKeyId: accessKeyId,
@@ -41,29 +26,33 @@ export class SqsService {
         return this.instance;
     }
 
-    public async getAllQueues(): Promise<{ pages: Page[] }> {
-        const pages: Page[] = [{ queues: [] }];
+    public async getAllQueues(): Promise<{ queues: QueueSummary[] }> {
+        const queues: { queues: QueueSummary[] } = {
+            queues: []
+        };
         let response = await this.client.listQueues().promise();
         if (response.QueueUrls) {
-            pages[0].queues.push(...(await this.createQueues(response.QueueUrls)))
+            queues.queues.push(...(await this.createQueueSummaries(response.QueueUrls)));
         }
         while (response.NextToken) {
-            response = await this.client.listQueues({ NextToken: response.NextToken }).promise()
+            response = await this.client.listQueues({ NextToken: response.NextToken }).promise();
             if (response.QueueUrls) {
-                pages.push({ queues: await this.createQueues(response.QueueUrls) })
+                queues.queues.push(...(await this.createQueueSummaries(response.QueueUrls)));
             }
         }
-        return { pages };
+        return queues;
     }
 
-    public async createQueue(queueName: string): Promise<void> {
-        await this.client.createQueue({ QueueName: queueName }).promise();
+    public async createQueue(queueName: string): Promise<QueueSummary> {
+        const resp = await this.client.createQueue({ QueueName: queueName }).promise();
+        const attr = await this.getQueueAttributes(resp.QueueUrl!);
+        return QueueSummary.create(resp.QueueUrl!, attr)
     }
 
-    private async createQueues(urls: string[]): Promise<Queue[]> {
+    private async createQueueSummaries(urls: string[]): Promise<QueueSummary[]> {
         return Promise.all(urls.map(async url => {
             const attr = await this.getQueueAttributes(url);
-            return Queue.create(url, attr)
+            return QueueSummary.create(url, attr)
         }));
     }
 
@@ -79,7 +68,10 @@ export class SqsService {
         const arnSections = allAttributes.QueueArn.split(':');
         const queueName = arnSections[arnSections.length -1];
         return {
-            CreatedTimestamp: '',
+            ApproximateNumberOfMessages: Number(allAttributes.ApproximateNumberOfMessages),
+            ApproximateNumberOfMessagesDelayed: Number(allAttributes.ApproximateNumberOfMessagesDelayed),
+            ApproximateNumberOfMessagesNotVisible: Number(allAttributes.ApproximateNumberOfMessagesNotVisible),
+            CreatedTimestamp: Number(allAttributes.CreatedTimestamp),
             DelaySeconds: Number(allAttributes.DelaySeconds),
             LastModifiedTimestamp: Number(allAttributes.LastModifiedTimestamp),
             MaximumMessageSize: Number(allAttributes.MaximumMessageSize),

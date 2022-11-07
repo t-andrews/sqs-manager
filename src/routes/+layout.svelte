@@ -7,6 +7,7 @@
     import TopAppBar, { Row, Section, AutoAdjust } from '@smui/top-app-bar';
     import { mdiLightbulbOff, mdiLightbulbOn } from '@mdi/js'
     import { Svg } from '@smui/common';
+    import { page } from '$app/stores';
 
     let topAppBar;
 
@@ -37,7 +38,13 @@
     onMount(checkIfConnected)
 </script>
 
-<TopAppBar bind:this={topAppBar} variant="standard">
+<style>
+    .container {
+        width: 100%;
+    }
+</style>
+
+<TopAppBar bind:this={topAppBar} variant="standard" style="width: 60%; margin-left: 20%; left: 0">
     <Row>
         <Section>
             <h1>SQS Manager</h1>
@@ -59,12 +66,6 @@
     </Row>
 </TopAppBar>
 
-<style>
-    .container {
-        width: 100%;
-    }
-</style>
-
-<AutoAdjust {topAppBar} style="display: flex; justify-content: space-between;">
+<AutoAdjust {topAppBar} style="display: flex; justify-content: space-between; width: 60%; margin-left: 20%">
     <div class="container"><slot /></div>
 </AutoAdjust>
