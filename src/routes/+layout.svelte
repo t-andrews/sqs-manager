@@ -1,13 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { Svg } from '@smui/common';
     import { goto } from '$app/navigation';
-    import IconButton, { Icon } from '@smui/icon-button';
     import { isDark } from '../lib/shared/stores/Theme';
+    import IconButton, { Icon } from '@smui/icon-button';
+    import { mdiLightbulbOff, mdiLightbulbOn } from '@mdi/js'
     import { accountInfo } from '../lib/shared/stores/AccountInfo';
     import TopAppBar, { Row, Section, AutoAdjust } from '@smui/top-app-bar';
-    import { mdiLightbulbOff, mdiLightbulbOn } from '@mdi/js'
-    import { Svg } from '@smui/common';
-    import { page } from '$app/stores';
 
     let topAppBar;
 
@@ -44,10 +43,10 @@
     }
 </style>
 
-<TopAppBar bind:this={topAppBar} variant="standard" style="width: 60%; margin-left: 20%; left: 0">
+<TopAppBar bind:this={topAppBar} variant="standard" style="width: 60%; margin-left: 20%; left: 0; min-width: 500px">
     <Row>
         <Section>
-            <h1>SQS Manager</h1>
+            <a style="color: white; text-decoration: none;" href="/"><h1>SQS Manager</h1></a>
         </Section>
         <Section align="end" toolbar>
             <IconButton on:click={switchTheme}>
@@ -66,6 +65,6 @@
     </Row>
 </TopAppBar>
 
-<AutoAdjust {topAppBar} style="display: flex; justify-content: space-between; width: 60%; margin-left: 20%">
+<AutoAdjust {topAppBar} style="display: flex; justify-content: space-between; width: 60%; margin-left: 20%; min-width: 500px">
     <div class="container"><slot /></div>
 </AutoAdjust>

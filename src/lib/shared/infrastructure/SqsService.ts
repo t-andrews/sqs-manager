@@ -45,8 +45,13 @@ export class SqsService {
 
     public async createQueue(queueName: string): Promise<QueueSummary> {
         const resp = await this.client.createQueue({ QueueName: queueName }).promise();
-        const attr = await this.getQueueAttributes(resp.QueueUrl!);
-        return QueueSummary.create(resp.QueueUrl!, attr)
+        const queueUrl = resp.QueueUrl as string;
+        const attr = await this.getQueueAttributes(queueUrl);
+        return QueueSummary.create(queueUrl, attr)
+    }
+
+    public async deleteQueue(queueUrl: string): Promise<void> {
+        await this.client.deleteQueue({ QueueUrl: queueUrl }).promise();
     }
 
     private async createQueueSummaries(urls: string[]): Promise<QueueSummary[]> {

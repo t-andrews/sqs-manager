@@ -1,15 +1,15 @@
 <script>
+    import List from '@smui/list';
     import Card from '@smui/card';
     import Button from '@smui/button';
     import Keydown from 'svelte-keydown';
-    import { invalidate } from "$app/navigation";
     import Textfield from '@smui/textfield';
+    import QueueListItem from "./QueueListItem.svelte";
     import HelperText from '@smui/textfield/helper-text';
     import { SyncLoader } from 'svelte-loading-spinners';
     import { clientFetch } from "$lib/shared/client/clientFetch";
     import { accountInfo } from "$lib/shared/stores/AccountInfo";
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
-    import List, { Item, PrimaryText, SecondaryText, Text } from '@smui/list';
 
     async function getAllQueues() {
         const resp = await clientFetch('/api/queues', $accountInfo);
@@ -64,7 +64,7 @@
         </Textfield>
     </Content>
     <Actions>
-        <div class="create-queue-btn">
+        <div>
             {#if creatingQueue}
                 <SyncLoader size="30" color="#FF3E00" unit="px" duration="1s" />
             {:else}
@@ -83,7 +83,7 @@
         }
     }
 />
-<Button variant="raised" color="secondary" style="margin-top: 8px; left: 100%; transform:translate(-100%, 0);" on:click={() => (createQueueDialogOpen = true)}>Create</Button>
+<Button variant="raised" color="primary" style="margin-top: 10px; left: 100%; transform:translate(-100%, 0);" on:click={() => (createQueueDialogOpen = true)}>Create</Button>
 
 <div class="card-container queue-list-card">
     <Card padded variant="primary">
@@ -92,12 +92,7 @@
         {:then { queues }}
             <List twoLine nonInteractive>
                 {#each queues as queue}
-                    <Item>
-                        <Text>
-                            <PrimaryText><a style="font-size: 1.3em" href={`/queue/${queue.attributes.QueueName}`}>{queue.attributes.QueueName}</a></PrimaryText>
-                            <SecondaryText>~{queue.attributes.ApproximateNumberOfMessages} messages</SecondaryText>
-                        </Text>
-                    </Item>
+                    <QueueListItem queue={queue}/>
                 {/each}
             </List>
         {/await}

@@ -17,6 +17,14 @@ export async function GET({ request }): Promise<Response> {
 // @ts-ignore
 export async function POST({ request }): Promise<Response> {
     const req = await request.json();
-    await SqsService.getInstance().createQueue(req.name);
+    const newQueue = await SqsService.getInstance().createQueue(req.name);
+    return new Response(JSON.stringify(newQueue));
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export async function DELETE({ request }): Promise<Response> {
+    const req = await request.json();
+    await SqsService.getInstance().deleteQueue(req.queueUrl);
     return new Response();
 }
