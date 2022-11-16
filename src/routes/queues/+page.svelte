@@ -1,6 +1,7 @@
 <script>
     import List from '@smui/list';
     import Card from '@smui/card';
+    import Paper from '@smui/paper';
     import Button from '@smui/button';
     import Keydown from 'svelte-keydown';
     import Textfield from '@smui/textfield';
@@ -10,11 +11,6 @@
     import { clientFetch } from "$lib/shared/client/clientFetch";
     import { accountInfo } from "$lib/shared/stores/AccountInfo";
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
-
-    async function getAllQueues() {
-        const resp = await clientFetch('/api/queues', $accountInfo);
-        return resp.json();
-    }
 
     let createQueueDialogOpen = false;
     let creatingQueue = false;
@@ -40,7 +36,7 @@
         window.location = '/queues';
     }
 
-    let data = getAllQueues();
+    export let data;
 </script>
 
 <style>
@@ -83,12 +79,19 @@
         }
     }
 />
+
+<Paper style="padding: 1px 0 1px 10px" color="primary">
+    <h2>Queues</h2>
+</Paper>
+
 <Button variant="raised" color="primary" style="margin-top: 10px; left: 100%; transform:translate(-100%, 0);" on:click={() => (createQueueDialogOpen = true)}>Create</Button>
 
 <div class="card-container queue-list-card">
     <Card padded variant="primary">
         {#await data}
-            <SyncLoader size="30" color="#FF3E00" unit="px" duration="1s" />
+            <div style="width: 100%; display: flex; justify-content: center;">
+                <SyncLoader size="30" color="#FF3E00" unit="px" duration="1s" />
+            </div>
         {:then { queues }}
             <List twoLine nonInteractive>
                 {#each queues as queue}

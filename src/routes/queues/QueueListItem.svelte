@@ -37,10 +37,10 @@
     </Actions>
 </Dialog>
 
-<Item>
+<Item style="padding: 15px">
     <Text style="width: 70%">
-        <PrimaryText><a style="font-size: 1.3em" href={`/queue/${queue.attributes.QueueName}`}>{queue.attributes.QueueName}</a></PrimaryText>
-        <SecondaryText>~{queue.attributes.ApproximateNumberOfMessages} messages</SecondaryText>
+        <PrimaryText><a style="font-size: 1.3em;" href={`/queue/${queue.attributes.QueueName}`}>{queue.attributes.QueueName}</a></PrimaryText>
+        <SecondaryText style="top: 20px">~{queue.attributes.ApproximateNumberOfMessages} messages</SecondaryText>
     </Text>
     <Actions style="width: 30%">
         <Button variant="raised" color="secondary" style="right: 0" on:click={() => deleteQueueDialogOpen = true}>Delete</Button>

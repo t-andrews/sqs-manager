@@ -6,7 +6,7 @@ export class SqsService {
     private static instance: SqsService;
 
     private constructor(endpoint: string) {
-        this.client = new AWS.SQS({ endpoint })
+        this.client = new AWS.SQS({ endpoint });
     }
 
     public static getInstance() {
@@ -24,6 +24,11 @@ export class SqsService {
         }
 
         return this.instance;
+    }
+
+    public async getQueueByName(queueName: string): Promise<QueueSummary|null> {
+        const { queues } = await this.getAllQueues();
+        return queues.find(q => q.attributes.QueueName === queueName) || null;
     }
 
     public async getAllQueues(): Promise<{ queues: QueueSummary[] }> {

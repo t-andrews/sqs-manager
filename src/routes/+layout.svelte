@@ -43,28 +43,17 @@
     }
 </style>
 
-<TopAppBar bind:this={topAppBar} variant="standard" style="width: 60%; margin-left: 20%; left: 0; min-width: 500px">
-    <Row>
-        <Section>
-            <a style="color: white; text-decoration: none;" href="/"><h1>SQS Manager</h1></a>
-        </Section>
-        <Section align="end" toolbar>
-            <IconButton on:click={switchTheme}>
-                {#if $isDark}
-                    <Icon component={Svg} viewBox="0 0 24 24" style="color: white">
-                        <path fill="currentColor" d={mdiLightbulbOn}></path>
-                    </Icon>
-                {:else}
-                    <Icon component={Svg} viewBox="0 0 24 24" style="color: black">
-                        <path fill="currentColor" d={mdiLightbulbOff}></path>
-                    </Icon>
-                {/if}
-
-            </IconButton>
-        </Section>
-    </Row>
-</TopAppBar>
-
+<IconButton style="float:right" on:click={switchTheme}>
+    {#if $isDark}
+        <Icon component={Svg} viewBox="0 0 24 24" style="color: white">
+            <path fill="currentColor" d={mdiLightbulbOn}></path>
+        </Icon>
+    {:else}
+        <Icon component={Svg} viewBox="0 0 24 24" style="color: black">
+            <path fill="currentColor" d={mdiLightbulbOff}></path>
+        </Icon>
+    {/if}
+</IconButton>
 <AutoAdjust {topAppBar} style="display: flex; justify-content: space-between; width: 60%; margin-left: 20%; min-width: 500px">
     <div class="container"><slot /></div>
 </AutoAdjust>
